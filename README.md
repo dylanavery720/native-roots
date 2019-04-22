@@ -3,7 +3,7 @@ Native Roots (Dylan Avery)
 
 Summary
 ---
-Lorum Ipsum  
+A simple app to display basic harvest information and to allow a user to add a new harvest to the DB.
 
 
 
