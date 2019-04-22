@@ -3,14 +3,14 @@ import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Harvest } from './harvests.entity';
 import { HarvestDTO } from './harvests.dto';
-import { Bay } from '../bays/bays.entity';
+import { BaysService } from 'bays/bays.service';
 
 @Injectable()
 export class HarvestsService {
     constructor(
         @InjectRepository(Harvest)
         private readonly harvestsRepository: Repository<Harvest>,
-        private readonly baysRepository: Repository<Bay>
+        private readonly baysService: BaysService
     ) { }
 
     async getHarvest(id): Promise<Harvest> {
@@ -31,23 +31,24 @@ export class HarvestsService {
     async prepareHarvest(harvestDTO: HarvestDTO): Promise<Harvest> {
         let harvest: Harvest = harvestDTO as Harvest
         const { harvestGrams, totalPlantGrams, plantCount } = harvestDTO
-        const bay = await this.baysRepository.findOne(harvest.bay)
+        const bay = await this.baysService.getBay(harvest.bay.id)
         harvest.date = new Date()
         harvest.harvestLbs = this.convertGramsToPounds(harvestGrams)
         harvest.totalPlantLbs = this.convertGramsToPounds(totalPlantGrams)
-        harvest.percentHarvestedPlantWeight = this.convertPercentage(totalPlantGrams, harvestGrams)
+        harvest.percentHarvestedPlantWeight = (this.convertPercentage(harvestGrams, totalPlantGrams) * 100)
         harvest.lbsHarvestedPerSqFt = this.convertPercentage(harvest.totalPlantLbs, bay.squareFootage)
         harvest.planstPerLight = this.convertPercentage(plantCount, bay.lightCount)
         harvest.harvestLbsPerLight = this.convertPercentage(harvest.harvestLbs, bay.lightCount)
-        harvest.sfFtPerPlant = this.convertPercentage(plantCount, bay.squareFootage)
+        harvest.sqFtPerPlant = this.convertPercentage(plantCount, bay.squareFootage)
+        harvest.bay = bay
         return harvest
     }
 
-    convertGramsToPounds(grams) {
-        return grams / 453.59237
+    convertGramsToPounds(grams): number {
+        return Number(grams / 453.59237)
     }
 
-    convertPercentage(num, den) {
-        return num / den
+    convertPercentage(num, den): number {
+        return Number(num / den)
     }
 }

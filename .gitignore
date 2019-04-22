@@ -26,3 +26,4 @@ yarn-error.log*
 /native-roots-server/node_modules
 /native-roots-server/ormconfig.js
 /native-roots-server/nodemon-debug.json
+.vscode

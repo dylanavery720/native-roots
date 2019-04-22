@@ -28,25 +28,25 @@ export class Harvest {
     @Column()
     date: Date;
 
-    @Column()
+    @Column({ type: 'float' })
     harvestLbs: number;
 
-    @Column()
+    @Column({ type: 'float' })
     totalPlantLbs: number;
 
-    @Column()
+    @Column({ type: 'float' })
     percentHarvestedPlantWeight: number;
 
-    @Column()
+    @Column({ type: 'float' })
     lbsHarvestedPerSqFt: number;
 
-    @Column()
+    @Column({ type: 'float' })
     planstPerLight: number;
 
-    @Column()
+    @Column({ type: 'float' })
     harvestLbsPerLight: number;
 
-    @Column()
-    sfFtPerPlant: number;
+    @Column({ type: 'float' })
+    sqFtPerPlant: number;
 }
 
