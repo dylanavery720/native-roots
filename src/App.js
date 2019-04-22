@@ -1,25 +1,50 @@
 import React, { Component } from 'react';
-import logo from './logo.svg';
 import './App.css';
+import { getHarvests, createNewHarvest } from './Requests/requests'
+import Card from './Card/Card'
+import Form from './Form/Form'
 
 class App extends Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      harvests: [],
+    };
+  }
+
+  async componentDidMount() {
+    await this.getAllHarvests()
+  }
+
+  async getAllHarvests() {
+    const harvests = await getHarvests()
+    this.setState({ harvests })
+  }
+
+  async createHarvest(harvest) {
+    await createNewHarvest(harvest)
+    await this.getAllHarvests()
+  }
+
+  displayHarvests(harvests) {
+    const harvestCards = harvests.map(harvest => (
+      <Card
+        key={harvest.id}
+        harvest={harvest}
+      />
+    ));
+    return harvestCards;
+  }
+
   render() {
     return (
       <div className="App">
-        <header className="App-header">
-          <img src={logo} className="App-logo" alt="logo" />
-          <p>
-            Edit <code>src/App.js</code> and save to reload.
-          </p>
-          <a
-            className="App-link"
-            href="https://reactjs.org"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Learn React
-          </a>
-        </header>
+        <h1>New Harvest Form:</h1>
+        <Form  createHarvest={(harvest) => this.createHarvest(harvest)}/>
+        <div>
+        <h1>Harvests:</h1>
+        {this.displayHarvests(this.state.harvests)}
+        </div>
       </div>
     );
   }
